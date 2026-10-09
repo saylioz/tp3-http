@@ -1,2 +1,1 @@
-Notes de cours (fichier texte, servi en text/plain).
-Ligne 2 : accents éàù.
+Un fichier texte, servi en text/plain.

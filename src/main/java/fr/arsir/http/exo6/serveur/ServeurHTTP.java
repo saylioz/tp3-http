@@ -9,7 +9,7 @@ import fr.arsir.http.exo6.service.ServiceRequete;
 
 public class ServeurHTTP {
 
-    private static final int PORT = 6666;
+    private static final int PORT = 8080;
 
     // dossier du site web
     private static final String DOSSIER_SITE = "www/site1";

@@ -8,7 +8,7 @@ import fr.arsir.http.exo5.service.ServiceRequete;
 
 public class ServeurHTTP {
 
-    private static final int PORT = 6666;
+    private static final int PORT = 8080;
 
     private final ServiceRequete requetes;
     private final ServiceReponse reponses;

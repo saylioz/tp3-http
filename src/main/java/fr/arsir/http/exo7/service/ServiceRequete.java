@@ -128,7 +128,7 @@ public class ServiceRequete {
 
                 String hote = m.group(2).trim().toLowerCase();
 
-                // hote:port -> hote  (adresse IPv6 : [::1]:6666)
+                // hote:port -> hote  (adresse IPv6 : [::1]:8080)
                 if (hote.startsWith("[")) {
                     hote = hote.substring(0, hote.indexOf(']') + 1);
                 } else if (hote.indexOf(':') != -1) {

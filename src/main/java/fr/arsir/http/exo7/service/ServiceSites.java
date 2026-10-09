@@ -17,7 +17,7 @@ public class ServiceSites {
         sites.put("site1.localhost", site1);
         sites.put("site2.localhost", site2);
 
-        // http://localhost:6666 affiche le site 1 (site par défaut)
+        // http://localhost:8080 affiche le site 1 (site par défaut)
         sites.put("localhost", site1);
     }
 

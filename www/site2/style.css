@@ -1,12 +1,5 @@
 body {
     font-family: serif;
     background: #fff4e0;
-    color: #4a2c00;
-    margin: 2em auto;
-    width: 36em;
-    max-width: 95%;
-}
-
-h1 {
-    color: #c25b00;
+    margin: 2em;
 }
