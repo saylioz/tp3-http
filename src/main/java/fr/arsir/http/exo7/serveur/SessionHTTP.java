@@ -15,8 +15,6 @@ import fr.arsir.http.exo7.service.ServiceReponse;
 import fr.arsir.http.exo7.service.ServiceRequete;
 import fr.arsir.http.exo7.service.ServiceSites;
 
-// Une session = un thread par client (cf. CM). Le protocole HTTP est sans
-// connexion : une requête, une réponse, puis la socket est fermée.
 public class SessionHTTP extends Thread {
 
     private static final int DELAI = 10000;
@@ -41,10 +39,8 @@ public class SessionHTTP extends Thread {
     public void run() {
 
         try {
-            // un client qui n'envoie rien ne doit pas bloquer le thread
             socketClient.setSoTimeout(DELAI);
 
-            // 1 - Ouverture des flux de la socket
             InputStream fluxEntree =
                     new BufferedInputStream(socketClient.getInputStream());
 
@@ -52,17 +48,14 @@ public class SessionHTTP extends Thread {
 
             String requete;
 
-            // 2 - Recevoir la requête
             try {
                 requete = requetes.recevoirRequete(fluxEntree);
 
             } catch (SocketTimeoutException e) {
-                // connexion inactive : on la ferme sans répondre
                 fermer();
                 return;
 
             } catch (IOException e) {
-                // requête trop longue ou illisible
                 fluxSortie.write(erreur(400));
                 fluxSortie.flush();
                 fermer();
@@ -70,12 +63,10 @@ public class SessionHTTP extends Thread {
             }
 
             if (requete == null) {
-                // le client s'est connecté sans rien envoyer
                 fermer();
                 return;
             }
 
-            // 3 - Construire et émettre la réponse
             byte[] reponse;
 
             try {
@@ -92,7 +83,6 @@ public class SessionHTTP extends Thread {
                             reponse, 0, Math.min(reponse.length, 40),
                             StandardCharsets.ISO_8859_1)));
 
-            // 4 - Libérer le canal
             fermer();
 
         } catch (Exception e) {
@@ -101,17 +91,14 @@ public class SessionHTTP extends Thread {
         }
     }
 
-    // choisit la réponse à envoyer pour une requête
     private byte[] repondre(String requete) throws IOException {
 
-        // requête bien formée ? (400, 405 ou 200)
         int code = requetes.verifier(requete);
 
         if (code != 200) {
             return erreur(code);
         }
 
-        // le champ Host désigne le site demandé ; absent : erreur
         String hote = requetes.getHote(requete);
 
         if (hote == null) {
@@ -124,7 +111,6 @@ public class SessionHTTP extends Thread {
             return erreur(404);
         }
 
-        // fichier demandé dans ce site
         Path chemin = site.construireChemin(requete);
 
         if (chemin == null) {
@@ -143,7 +129,6 @@ public class SessionHTTP extends Thread {
                 .getBytes(StandardCharsets.ISO_8859_1);
     }
 
-    // première ligne d'un message, sans caractère de contrôle (pour l'affichage)
     private String extraire(String message) {
 
         String ligne = message.split("\r?\n", 2)[0];
@@ -158,7 +143,6 @@ public class SessionHTTP extends Thread {
                 socketClient.close();
             }
         } catch (Exception e) {
-            // fermeture au mieux
         }
     }
 }

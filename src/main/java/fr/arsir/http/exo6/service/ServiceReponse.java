@@ -14,14 +14,11 @@ public class ServiceReponse {
 
     private static final String NOM_SERVEUR = "ServeurHTTP-ARSIR/1.0";
 
-    // lun., 24 nov. 2025 09:45:39 CET
     private static final DateTimeFormatter FORMAT_DATE =
             DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss zzz", Locale.FRENCH);
 
-    // table de correspondance code -> message
     private static final Map<Integer, String> MESSAGES = new HashMap<>();
 
-    // type de contenu en fonction de l'extension (cf. types MIME du CM)
     private static final Map<String, String> TYPES = new HashMap<>();
 
     static {
@@ -47,20 +44,16 @@ public class ServiceReponse {
         TYPES.put("mp3", "audio/mpeg");
     }
 
-    // Exercice 5, Q1 : en-tête sans Content-Length
     public String genererEntete(int code) {
         return genererEntete(code, -1, "text/html");
     }
 
-    // Exercice 5, Q1 : en-tête avec Content-Length (en octets)
     public String genererEntete(int code, long taille) {
         return genererEntete(code, taille, "text/html");
     }
 
-    // en-tête complet ; taille < 0 : pas de Content-Length
     public String genererEntete(int code, long taille, String type) {
 
-        // code inconnu : erreur 500
         if (!MESSAGES.containsKey(code)) {
             code = 500;
         }
@@ -75,7 +68,6 @@ public class ServiceReponse {
 
         entete.append("Server: ").append(NOM_SERVEUR).append("\r\n");
 
-        // pas de keep-alive : la connexion est fermée après la réponse
         entete.append("Connection: close\r\n");
 
         if (taille >= 0) {
@@ -84,13 +76,11 @@ public class ServiceReponse {
 
         entete.append("Content-Type: ").append(type).append("\r\n");
 
-        // ligne vide qui termine l'en-tête
         entete.append("\r\n");
 
         return entete.toString();
     }
 
-    // Exercice 5, Q2 : réponse en cas d'erreur = en-tête + page d'erreur
     public String genererReponseErreur(int code) {
 
         if (!MESSAGES.containsKey(code)) {
@@ -107,7 +97,6 @@ public class ServiceReponse {
         return genererEntete(code, taille) + page;
     }
 
-    // Exercice 6, Q2 : réponse (en-tête + contenu) pour un fichier existant
     public byte[] genererReponse(Path fichier) throws IOException {
 
         byte[] contenu = Files.readAllBytes(fichier);
@@ -125,7 +114,6 @@ public class ServiceReponse {
         return reponse;
     }
 
-    // type MIME déduit de l'extension du fichier
     private String typeContenu(Path fichier) {
 
         String nom = fichier.getFileName().toString().toLowerCase();

@@ -21,7 +21,6 @@ public class ServeurHTTP {
     public void demarrer() {
 
         try {
-            // 1 - Création du canal et réservation du port
             ServerSocket socketServeur = new ServerSocket(PORT);
 
             System.out.println(
@@ -29,11 +28,8 @@ public class ServeurHTTP {
 
             while (true) {
 
-                // 2 - Mise en attente et acceptation de la connexion
                 Socket socketClient = socketServeur.accept();
 
-                // 3 - Un thread par client (cf. CM) : les clients
-                //     sont servis en parallèle
                 SessionHTTP session = new SessionHTTP(
                         socketClient, requetes, reponses);
 

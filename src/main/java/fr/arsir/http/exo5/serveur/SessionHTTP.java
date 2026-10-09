@@ -11,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 import fr.arsir.http.exo5.service.ServiceReponse;
 import fr.arsir.http.exo5.service.ServiceRequete;
 
-// Une session = un thread par client (cf. CM). Le protocole HTTP est sans
-// connexion : une requête, une réponse, puis la socket est fermée.
 public class SessionHTTP extends Thread {
 
     private static final int DELAI = 10000;
@@ -34,10 +32,8 @@ public class SessionHTTP extends Thread {
     public void run() {
 
         try {
-            // un client qui n'envoie rien ne doit pas bloquer le thread
             socketClient.setSoTimeout(DELAI);
 
-            // 1 - Ouverture des flux de la socket
             InputStream fluxEntree =
                     new BufferedInputStream(socketClient.getInputStream());
 
@@ -45,35 +41,29 @@ public class SessionHTTP extends Thread {
 
             String requete;
 
-            // 2 - Recevoir la requête
             try {
                 requete = requetes.recevoirRequete(fluxEntree);
 
             } catch (SocketTimeoutException e) {
-                // connexion inactive : on la ferme sans répondre
                 fermer();
                 return;
 
             } catch (IOException e) {
-                // requête trop longue ou illisible
                 envoyer(fluxSortie, reponses.genererReponseErreur(400));
                 fermer();
                 return;
             }
 
             if (requete == null) {
-                // le client s'est connecté sans rien envoyer
                 fermer();
                 return;
             }
 
-            // 3 - Vérifier la requête
             int code = requetes.verifier(requete);
 
             String reponse;
 
             if (code == 200) {
-                // les fichiers ne sont pas encore servis (exercice 6)
                 String page = "<html><body><h1>Serveur HTTP</h1>"
                         + "<p>Requete valide.</p></body></html>\r\n";
 
@@ -83,13 +73,11 @@ public class SessionHTTP extends Thread {
                 reponse = reponses.genererReponseErreur(code);
             }
 
-            // 4 - Émettre la réponse
             envoyer(fluxSortie, reponse);
 
             System.out.println(socketClient.getInetAddress() + " : "
                     + extraire(requete) + " -> " + code);
 
-            // 5 - Libérer le canal
             fermer();
 
         } catch (Exception e) {
@@ -105,7 +93,6 @@ public class SessionHTTP extends Thread {
         fluxSortie.flush();
     }
 
-    // première ligne de la requête, sans caractère de contrôle (pour l'affichage)
     private String extraire(String requete) {
 
         String ligne = requete.split("\r?\n", 2)[0];
@@ -120,7 +107,6 @@ public class SessionHTTP extends Thread {
                 socketClient.close();
             }
         } catch (Exception e) {
-            // fermeture au mieux
         }
     }
 }

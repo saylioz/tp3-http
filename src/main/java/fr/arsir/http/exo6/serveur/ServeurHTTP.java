@@ -11,7 +11,6 @@ public class ServeurHTTP {
 
     private static final int PORT = 8080;
 
-    // dossier du site web
     private static final String DOSSIER_SITE = "www/site1";
 
     private final ServiceRequete requetes;
@@ -27,7 +26,6 @@ public class ServeurHTTP {
     public void demarrer() {
 
         try {
-            // 1 - Création du canal et réservation du port
             ServerSocket socketServeur = new ServerSocket(PORT);
 
             System.out.println(
@@ -35,11 +33,8 @@ public class ServeurHTTP {
 
             while (true) {
 
-                // 2 - Mise en attente et acceptation de la connexion
                 Socket socketClient = socketServeur.accept();
 
-                // 3 - Un thread par client (cf. CM) : les clients
-                //     sont servis en parallèle
                 SessionHTTP session = new SessionHTTP(
                         socketClient, requetes, reponses, site);
 
